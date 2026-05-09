@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Android Image Architect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/sitilo.css">
+</head>
+<body>
+
+<div id="app">
+
+  <header>
+    <div class="logo-wrap">
+      <div class="logo-mark">
+        <svg viewBox="0 0 34 34" fill="none">
+          <circle cx="17" cy="17" r="15.5" stroke="rgba(184,255,60,0.25)" stroke-width="1" stroke-dasharray="4 3"/>
+          <circle cx="17" cy="17" r="10" stroke="rgba(184,255,60,0.12)" stroke-width="1"/>
+        </svg>
+        <div class="center-dot"></div>
+      </div>
+      <div class="logo-text">
+        <div class="logo-name">Android Image <em>Architect</em></div>
+        <div class="logo-sub">AIA &nbsp;·&nbsp; ELECTRON + PYTHON</div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="hbadge">v2.1.0</div>
+      <div class="hbadge" id="hb-py">PY 3.11.4</div>
+      <div class="status-pill">
+        <div class="dot"></div>
+        PRONTO
+      </div>
+    </div>
+  </header>
+
+  <aside>
+    <div class="sec-lbl">Boot</div>
+    <div class="nav-item active" data-tab="boot">
+      <div class="ni-icon"><i class="fas fa-microchip"></i></div>
+      <span class="ni-label">Boot / Recovery</span>
+      <span class="ni-tag">v2/v4</span>
+    </div>
+
+    <div class="sep"></div>
+    <div class="sec-lbl">Dinâmico</div>
+    <div class="nav-item" data-tab="super">
+      <div class="ni-icon"><i class="fas fa-layer-group"></i></div>
+      <span class="ni-label">Super</span>
+      <span class="ni-tag">lp</span>
+    </div>
+
+    <div class="sep"></div>
+    <div class="sec-lbl">Sistema</div>
+    <div class="nav-item" data-tab="system">
+      <div class="ni-icon"><i class="fas fa-server"></i></div>
+      <span class="ni-label">System</span>
+    </div>
+    <div class="nav-item" data-tab="vendor">
+      <div class="ni-icon"><i class="fas fa-memory"></i></div>
+      <span class="ni-label">Vendor</span>
+    </div>
+    <div class="nav-item" data-tab="product">
+      <div class="ni-icon"><i class="fas fa-cube"></i></div>
+      <span class="ni-label">Product</span>
+    </div>
+
+    <div class="sep"></div>
+    <div class="sec-lbl">Componentes</div>
+    <div class="nav-item" data-tab="dtbo">
+      <div class="ni-icon"><i class="fas fa-code-branch"></i></div>
+      <span class="ni-label">DTBO</span>
+      <span class="ni-tag">dtb</span>
+    </div>
+    <div class="nav-item" data-tab="vbmeta">
+      <div class="ni-icon"><i class="fas fa-shield-halved"></i></div>
+      <span class="ni-label">Vbmeta</span>
+      <span class="ni-tag">avb</span>
+    </div>
+
+    <div class="sep"></div>
+    <div class="nav-item" data-tab="other">
+      <div class="ni-icon"><i class="fas fa-ellipsis"></i></div>
+      <span class="ni-label">Outras imagens</span>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- ─── BOOT ─── -->
+    <div id="tab-boot" class="tab-pane active">
+      <div class="tab-head">
+        <div class="th-icon"><i class="fas fa-microchip"></i></div>
+        <div>
+          <div class="th-title">Boot / Recovery</div>
+          <div class="th-sub">Extração de kernel, ramdisk e DTB</div>
+        </div>
+        <div class="th-right">
+          <button class="btn btn-ghost btn-sm"><i class="fas fa-circle-question"></i> Docs</button>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-head-title"><i class="fas fa-file"></i>Arquivo de origem</div>
+              <div class="card-head-line"></div>
+            </div>
+            <div class="fpath">
+              <span class="fp-icon"><i class="fas fa-file-circle-question"></i></span>
+              <span class="fp-text" id="boot-path">Nenhum arquivo selecionado</span>
+              <span class="fp-size" id="boot-size">—</span>
+            </div>
+            <div class="btn-row">
+              <button class="btn" id="btn-open-boot"><i class="fas fa-folder-open"></i> Abrir boot.img</button>
+              <button class="btn btn-lime" id="btn-unpack-boot"><i class="fas fa-box-open"></i> Desempacotar</button>
+            </div>
+
+            <div class="card-head" style="margin-top:8px;">
+              <div class="card-head-title"><i class="fas fa-list-ul"></i>Arquivos extraídos</div>
+              <div class="card-head-line"></div>
+            </div>
+            <div class="flist" id="boot-file-list">
+              <!-- Preenchido dinamicamente -->
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-head-title"><i class="fas fa-sliders"></i>Cabeçalho boot.img</div>
+              <div class="card-head-line"></div>
+            </div>
+            <div class="meta-grid" id="boot-header-meta">
+              <!-- Preenchido após extração -->
+            </div>
+            <div style="margin-top:10px;" id="cmdline-area" hidden>
+              <div class="mc-label" style="margin-bottom:6px;">CMDLINE</div>
+              <div class="fpath" style="margin-bottom:0;">
+                <span class="fp-icon"><i class="fas fa-terminal"></i></span>
+                <span class="fp-text" id="boot-cmdline" style="font-size:10px;color:#8a9bac;"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div class="card-head-title"><i class="fas fa-mobile-alt"></i>Identificação do dispositivo</div>
+              <div class="card-head-line"></div>
+            </div>
+            <div id="device-info" style="font-family:var(--mono); font-size:12px; color:var(--t2);">
+              Aguardando extração...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SUPER ─── -->
+    <div id="tab-super" class="tab-pane">
+      <div class="tab-head">
+        <div class="th-icon"><i class="fas fa-layer-group"></i></div>
+        <div>
+          <div class="th-title">Super — Partições Dinâmicas</div>
+          <div class="th-sub">Suporte a sparsechunks e imagem única</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title"><i class="fas fa-file"></i>Arquivo super</div>
+          <div class="card-head-line"></div>
+        </div>
+        <div class="fpath">
+          <span class="fp-icon"><i class="fas fa-file-circle-question"></i></span>
+          <span class="fp-text" id="super-path">Nenhum arquivo selecionado</span>
+          <span class="fp-size" id="super-size">—</span>
+        </div>
+        <!-- 🔄 Botões atualizados -->
+        <div class="btn-row">
+          <button class="btn" id="btn-open-super-file"><i class="fas fa-file"></i> Abrir super.img</button>
+          <button class="btn" id="btn-open-super-folder"><i class="fas fa-folder-plus"></i> Abrir pasta com chunks</button>
+          <button class="btn btn-lime" id="btn-unpack-super"><i class="fas fa-boxes-stacked"></i> Desempacotar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title"><i class="fas fa-hdd"></i>Partições detectadas</div>
+          <div class="card-head-line"></div>
+        </div>
+        <div class="part-grid" id="super-partitions">
+          <!-- Preenchido dinamicamente -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SYSTEM ─── -->
+    <div id="tab-system" class="tab-pane">
+      <div class="tab-head">
+        <div class="th-icon"><i class="fas fa-server"></i></div>
+        <div>
+          <div class="th-title">System Image</div>
+          <div class="th-sub">EXT4 · EROFS</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><div class="card-head-title"><i class="fas fa-file"></i>Origem</div><div class="card-head-line"></div></div>
+          <div class="fpath">
+            <span class="fp-icon"><i class="fas fa-file-circle-check"></i></span>
+            <span class="fp-text" id="system-path">Nenhum arquivo selecionado</span>
+            <span class="fp-size" id="system-size">—</span>
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="btn-open-system"><i class="fas fa-folder-open"></i> Selecionar</button>
+            <button class="btn btn-lime" id="btn-extract-system"><i class="fas fa-file-export"></i> Extrair</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-head-title"><i class="fas fa-folder-tree"></i>Conteúdo</div><div class="card-head-line"></div></div>
+          <div class="flist" id="system-file-list">
+            <!-- Preenchido após extração -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── VENDOR ─── -->
+    <div id="tab-vendor" class="tab-pane">
+      <div class="tab-head">
+        <div class="th-icon"><i class="fas fa-memory"></i></div>
+        <div><div class="th-title">Vendor Image</div><div class="th-sub">HALs · drivers · firmware</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-title"><i class="fas fa-file"></i>Arquivo</div><div class="card-head-line"></div></div>
+        <div class="fpath">
+          <span class="fp-icon"><i class="fas fa-file-circle-check"></i></span>
+          <span class="fp-text" id="vendor-path">Nenhum arquivo selecionado</span>
+          <span class="fp-size" id="vendor-size">—</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="btn-open-vendor"><i class="fas fa-folder-open"></i> Selecionar</button>
+          <button class="btn btn-lime" id="btn-extract-vendor"><i class="fas fa-file-export"></i> Extrair conteúdo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PRODUCT ─── -->
+    <div id="tab-product" class="tab-pane">
+      <div class="tab-head">
+        <div class="th-icon"><i class="fas fa-cube"></i></div>
+        <div><div class="th-title">Product Image</div><div class="th-sub">apps · overlays</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-title"><i class="fas fa-file"></i>Arquivo</div><div class="card-head-line"></div></div>
+        <div class="fpath">
+          <span class="fp-icon"><i class="fas fa-file-circle-check"></i></span>
+          <span class="fp-text" id="product-path">Nenhum arquivo selecionado</span>
+          <span class="fp-size" id="product-size">—</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="btn-open-product"><i class="fas fa-folder-open"></i> Selecionar</button>
+          <button class="btn btn-lime" id="btn-extract-product"><i class="fas fa-file-export"></i> Extrair conteúdo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── DTBO ─── -->
+    <div id="tab-dtbo" class="tab-pane">
+      <div class="tab-head">
+        <div class="th-icon"><i class="fas fa-code-branch"></i></div>
+        <div><div class="th-title">DTBO Image</div><div class="th-sub">Device Tree Overlay</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><div class="card-head-title"><i class="fas fa-file"></i>Arquivo</div><div class="card-head-line"></div></div>
+          <div class="fpath">
+            <span class="fp-icon"><i class="fas fa-file-circle-question"></i></span>
+            <span class="fp-text" id="dtbo-path">Nenhum arquivo selecionado</span>
+            <span class="fp-size">—</span>
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="btn-open-dtbo"><i class="fas fa-folder-open"></i> Selecionar</button>
+            <button class="btn btn-lime" id="btn-unpack-dtbo"><i class="fas fa-box-open"></i> Desempacotar DTs</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-head-title"><i class="fas fa-list"></i>Device Trees</div><div class="card-head-line"></div></div>
+          <div class="flist" id="dtbo-file-list">
+            <!-- Preenchido após extração -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── VBMETA ─── -->
+    <div id="tab-vbmeta" class="tab-pane">
+      <div class="tab-head">
+        <div class="th-icon"><i class="fas fa-shield-halved"></i></div>
+        <div><div class="th-title">Vbmeta</div><div class="th-sub">Android Verified Boot</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><div class="card-head-title"><i class="fas fa-file"></i>Arquivo</div><div class="card-head-line"></div></div>
+          <div class="fpath">
+            <span class="fp-icon"><i class="fas fa-file-shield"></i></span>
+            <span class="fp-text" id="vbmeta-path">Nenhum arquivo selecionado</span>
+            <span class="fp-size">—</span>
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="btn-open-vbmeta"><i class="fas fa-folder-open"></i> Selecionar</button>
+            <button class="btn btn-lime" id="btn-inspect-vbmeta"><i class="fas fa-magnifying-glass"></i> Inspecionar</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-head-title"><i class="fas fa-key"></i>Metadados AVB</div><div class="card-head-line"></div></div>
+          <div id="vbmeta-info" style="font-family:var(--mono); font-size:12px; color:var(--t2);">
+            Aguardando inspeção...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── OUTROS ─── -->
+    <div id="tab-other" class="tab-pane">
+      <div class="tab-head">
+        <div class="th-icon"><i class="fas fa-ellipsis"></i></div>
+        <div><div class="th-title">Outras Imagens</div><div class="th-sub">userdata · cache · misc · modem</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-head-title"><i class="fas fa-cubes"></i>Imagem arbitrária</div><div class="card-head-line"></div></div>
+        <div class="fpath">
+          <span class="fp-icon"><i class="fas fa-file-circle-question"></i></span>
+          <span class="fp-text">Nenhum arquivo selecionado</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="btn-open-other"><i class="fas fa-folder-open"></i> Abrir imagem</button>
+          <button class="btn btn-lime" id="btn-extract-other"><i class="fas fa-file-export"></i> Extrair (se aplicável)</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="console-area">
+    <div class="con-bar">
+      <div class="con-bar-title"><i class="fas fa-terminal"></i>CONSOLE</div>
+      <div class="con-actions">
+        <button class="con-btn" id="btn-con-clear">limpar</button>
+        <button class="con-btn" id="btn-con-save"><i class="fas fa-floppy-disk"></i> salvar log</button>
+      </div>
+    </div>
+    <div id="con-body"></div>
+  </div>
+
+</div>
+
+<!-- 🔥 Script mantido exatamente como você já havia atualizado -->
+<script>
+(() => {
+  const conBody = document.getElementById('con-body');
+
+  function ts() { return new Date().toLocaleTimeString('pt-BR', { hour12: false }); }
+  function formatSize(bytes) {
+    if (!bytes || bytes === 0) return '—';
+    const units = ['B', 'KB', 'MB', 'GB'];
+    let i = 0;
+    while (bytes >= 1024 && i < units.length - 1) { bytes /= 1024; i++; }
+    return bytes.toFixed(1) + ' ' + units[i];
+  }
+  function addLog(msg, cls='') {
+    const d = document.createElement('div');
+    d.innerHTML = `<span class="log-ts">[${ts()}]</span><span class="${cls}">${msg}</span>`;
+    conBody.appendChild(d);
+    conBody.scrollTop = conBody.scrollHeight;
+  }
+  function setPath(id, path, size = null) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = path || 'Nenhum arquivo selecionado';
+    const sz = document.getElementById(id.replace('-path','-size'));
+    if (sz && size) sz.textContent = size;
+  }
+
+  const API = window.AIA || {};
+  const hasElectron = !!API.runPython;
+
+  if (!hasElectron) {
+    addLog('⚠️ Electron API não detectada. Execute dentro do Electron.', 'log-warn');
+  } else {
+    API.onLog((data) => {
+      data.text.split('\n').filter(l=>l.trim()).forEach(line => addLog(line, data.type==='stderr'?'log-err':''));
+    });
+    API.onProgress(p => {
+      document.querySelectorAll('.prog-fill').forEach(f => f.style.width = p+'%');
+    });
+  }
+
+  async function runPython(script, args, okMsg) {
+    if (!hasElectron) { addLog('❌ Sem Electron.', 'log-err'); return null; }
+    try {
+      addLog(`⚙️ ${script}...`, 'log-warn');
+      const res = await API.runPython(script, args);
+      if (res?.error) { addLog(`❌ ${res.error}`, 'log-err'); return null; }
+      if (okMsg) addLog(okMsg, 'log-ok');
+      return res;
+    } catch(e) { addLog(`❌ ${e.message}`, 'log-err'); return null; }
+  }
+
+  // Funções de seleção de arquivo e pasta
+  async function selectFile(title, filters) {
+    if (!hasElectron) return null;
+    return await API.selectFile({ title, filters: filters || [{name:'Imagens Android', extensions:['img','pac','bin']}], properties:['openFile'] });
+  }
+  async function selectFolder(title) {
+    if (!hasElectron) return null;
+    return await API.selectFile({ title: title || 'Selecionar pasta', properties: ['openDirectory'] });
+  }
+
+  // ──── BOOT ────
+  document.getElementById('btn-open-boot').onclick = async () => {
+    const f = await selectFile('Selecionar boot.img', [{name:'Boot Image', extensions:['img']}]);
+    if (f) setPath('boot-path', f);
+  };
+  document.getElementById('btn-unpack-boot').onclick = async () => {
+    const path = document.getElementById('boot-path')?.textContent;
+    if (!path || path.includes('Nenhum')) { addLog('⚠️ Selecione boot.img', 'log-warn'); return; }
+    const out = path.replace(/\.img$/i, '_extracted');
+    const r = await runPython('extract_boot.py', [path, out], '✓ Boot extraído.');
+    if (!r) return;
+    const list = document.getElementById('boot-file-list');
+    list.innerHTML = r.files.map(f => `<div class="flist-item"><i class="fas fa-file"></i><span class="fi-name">${f.name}</span><span class="fi-size">${formatSize(f.size)}</span></div>`).join('');
+    const meta = document.getElementById('boot-header-meta');
+    meta.innerHTML = Object.entries(r.header).filter(([k])=> !['cmdline','device_name','model_from_ramdisk'].includes(k)).map(([k,v]) => `<div class="meta-chip"><div class="mc-label">${k}</div><div class="mc-val small">${v}</div></div>`).join('');
+    const cmdlineArea = document.getElementById('cmdline-area');
+    if (r.header.cmdline) {
+      cmdlineArea.hidden = false;
+      document.getElementById('boot-cmdline').textContent = r.header.cmdline;
+    } else cmdlineArea.hidden = true;
+    const devInfo = document.getElementById('device-info');
+    devInfo.innerHTML = `Nome do cabeçalho: ${r.header.device_name || 'N/D'}<br>Modelo (ramdisk): ${r.header.model_from_ramdisk || 'N/D'}`;
+  };
+
+  // ──── SUPER ────
+  document.getElementById('btn-open-super-file').onclick = async () => {
+    const f = await selectFile('Selecionar super.img (único)', [{name:'Super Image', extensions:['img']}]);
+    if (f) setPath('super-path', f);
+  };
+  document.getElementById('btn-open-super-folder').onclick = async () => {
+    const folder = await selectFolder('Selecionar pasta com os chunks do super');
+    if (folder) setPath('super-path', folder, '(pasta de chunks)');
+  };
+
+  document.getElementById('btn-unpack-super').onclick = async () => {
+    const path = document.getElementById('super-path')?.textContent;
+    if (!path || path.includes('Nenhum')) { addLog('⚠️ Selecione super.img ou pasta primeiro.', 'log-warn'); return; }
+    const out = path.replace(/\.img$/i, '_extracted').replace(/_sparsechunk\d+/, '').replace(/[\\/]$/, '') + '_extracted';
+    const isChunk = /_sparsechunk\d+/.test(path);
+    const isFolder = !path.endsWith('.img');
+    const script = (isChunk || isFolder) ? 'extract_super_chunks.py' : 'extract_super.py';
+    const r = await runPython(script, [path, out], '✓ Super processado.');
+    if (!r || !r.partitions) return;
+    const grid = document.getElementById('super-partitions');
+    grid.innerHTML = r.partitions.map(p => `
+      <div class="part-chip sel" data-part="${p.name}">
+        <i class="pci fas fa-hdd"></i>
+        <span class="pcn">${p.name}</span>
+        <span class="pcs">${formatSize(p.size)}</span>
+      </div>`).join('');
+    document.querySelectorAll('.part-chip').forEach(c => c.onclick = () => c.classList.toggle('sel'));
+  };
+
+  // ──── SYSTEM / VENDOR / PRODUCT ────
+  ['system','vendor','product'].forEach(tab => {
+    document.getElementById(`btn-open-${tab}`).onclick = async () => {
+      const f = await selectFile(`Selecionar ${tab}.img`);
+      if (f) setPath(`${tab}-path`, f);
+    };
+    document.getElementById(`btn-extract-${tab}`).onclick = async () => {
+      const path = document.getElementById(`${tab}-path`)?.textContent;
+      if (!path || path.includes('Nenhum')) { addLog('⚠️ Selecione imagem', 'log-warn'); return; }
+      const out = path.replace(/\.img$/i, '_fs');
+      await runPython('extract_fs.py', [path, out], `✓ ${tab} extraído.`);
+    };
+  });
+
+  // ──── DTBO ────
+  document.getElementById('btn-open-dtbo').onclick = async () => {
+    const f = await selectFile('Selecionar dtbo.img');
+    if (f) setPath('dtbo-path', f);
+  };
+  document.getElementById('btn-unpack-dtbo').onclick = async () => {
+    const path = document.getElementById('dtbo-path')?.textContent;
+    if (!path || path === 'Nenhum arquivo selecionado') { addLog('⚠️ Selecione dtbo.img', 'log-warn'); return; }
+    const out = path.replace(/\.img$/i, '_dtbs');
+    const r = await runPython('extract_dtbo.py', [path, out], '✓ DTBO extraído.');
+    if (r?.dtbs) {
+      document.getElementById('dtbo-file-list').innerHTML = r.dtbs.map(dtb => {
+        const name = dtb.split(/[\\/]/).pop();
+        return `<div class="flist-item"><i class="fas fa-file"></i><span class="fi-name">${name}</span><span class="fi-type">dtb</span></div>`;
+      }).join('');
+    }
+  };
+
+  // ──── VBMETA ────
+  document.getElementById('btn-open-vbmeta').onclick = async () => {
+    const f = await selectFile('Selecionar vbmeta.img');
+    if (f) setPath('vbmeta-path', f);
+  };
+  document.getElementById('btn-inspect-vbmeta').onclick = async () => {
+    const path = document.getElementById('vbmeta-path')?.textContent;
+    if (!path || path === 'Nenhum arquivo selecionado') { addLog('⚠️ Selecione vbmeta.img', 'log-warn'); return; }
+    const r = await runPython('inspect_vbmeta.py', [path], '✓ Vbmeta inspecionado.');
+    if (r) {
+      document.getElementById('vbmeta-info').innerHTML = `
+        Algorithm: ${r.algorithm || 'N/D'}<br>
+        Public Key: ${r.public_key_hash || r.public_key_file || 'N/D'}<br>
+        Flags: ${(r.flags||[]).join(', ') || 'N/D'}
+      `;
+    }
+  };
+
+  // ──── OUTROS ────
+  document.getElementById('btn-open-other').onclick = async () => {
+    const f = await selectFile('Abrir imagem qualquer');
+    if (f) addLog(`📂 ${f}`, 'log-info');
+  };
+  document.getElementById('btn-extract-other').onclick = () => addLog('⚠️ Função em desenvolvimento.', 'log-warn');
+
+  // Navegação
+  document.querySelectorAll('.nav-item[data-tab]').forEach(item => {
+    item.onclick = () => {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      item.classList.add('active');
+      document.getElementById('tab-'+item.dataset.tab).classList.add('active');
+      addLog(`→ ${item.querySelector('.ni-label').textContent}`, 'log-info');
+    };
+  });
+
+  // Console
+  document.getElementById('btn-con-clear').onclick = () => { conBody.innerHTML = ''; addLog('Console limpo.', 'log-info'); };
+  document.getElementById('btn-con-save').onclick = () => {
+    const lines = [...conBody.children].map(d => d.textContent).join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(lines);
+    a.download = 'aia-log-'+Date.now()+'.txt';
+    a.click();
+  };
+
+  // Init
+  (async () => {
+    if (hasElectron) {
+      try { document.getElementById('hb-py').textContent = 'PY ' + (await API.getPythonVersion()); } catch(e) {}
+      addLog('✓ Android Image Architect v2.1.0', 'log-ok');
+    } else addLog('ℹ️ Modo offline.', 'log-info');
+  })();
+})();
+</script>
+</body>
+</html>
